@@ -88,8 +88,6 @@ if ( LUA_USE_READLINE )
 endif ( )
 
 ## SOURCES
-# Generate luaconf.h
-configure_file ( src/luaconf.h.in ${CMAKE_CURRENT_BINARY_DIR}/luaconf.h )
 
 # Sources and headers
 set(SRC_ALL
@@ -145,7 +143,7 @@ endif ()
 install_library ( liblua )
 install_data ( README.md )
 #install_lua_module ( strict etc/strict.lua )
-install_header ( src/lua.h src/lualib.h src/lauxlib.h src/lua.hpp ${CMAKE_CURRENT_BINARY_DIR}/luaconf.h )
+install_header ( src/lua.h src/lualib.h src/lauxlib.h src/lua.hpp )
 install_doc ( doc/ )
 install_foo ( etc/ )
 #install_test ( test/ )
