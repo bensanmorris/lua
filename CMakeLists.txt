@@ -92,46 +92,56 @@ endif ( )
 configure_file ( src/luaconf.h.in ${CMAKE_CURRENT_BINARY_DIR}/luaconf.h )
 
 # Sources and headers
+set(SRC_ALL
+    "src/lapi.c"
+    "src/lcode.c"
+    "src/lctype.c"
+    "src/ldebug.c"
+    "src/ldo.c"
+    "src/ldump.c"
+    "src/lfunc.c"
+    "src/lgc.c"
+    "src/llex.c"
+    "src/lmem.c"
+    "src/lobject.c"
+    "src/lopcodes.c"
+    "src/lparser.c"
+    "src/lstate.c"
+    "src/lstring.c"
+    "src/ltable.c"
+    "src/ltm.c"
+    "src/lundump.c"
+    "src/lvm.c"
+    "src/lzio.c"
+    "src/lauxlib.c"
+    "src/lbaselib.c"
+    "src/lcorolib.c"
+    "src/ldblib.c"
+    "src/liolib.c"
+    "src/lmathlib.c"
+    "src/loslib.c"
+    "src/lstrlib.c"
+    "src/ltablib.c"
+    "src/lutf8lib.c"
+    "src/linit.c")
 include_directories ( src ${CMAKE_CURRENT_BINARY_DIR} )
-set ( SRC_CORE src/lapi.c src/lcode.c src/lctype.c src/ldebug.c src/ldo.c src/ldump.c
-  src/lfunc.c src/lgc.c src/llex.c src/lmem.c src/lobject.c src/lopcodes.c src/lparser.c
-  src/lstate.c src/lstring.c src/ltable.c src/ltm.c src/lundump.c src/lvm.c src/lzio.c )
-set ( SRC_LIB src/lauxlib.c src/lbaselib.c src/lbitlib.c src/lcorolib.c src/ldblib.c
-  src/liolib.c src/lmathlib.c src/loslib.c src/lstrlib.c src/ltablib.c src/linit.c
-  src/lutf8lib.c )
-set ( SRC_LUA src/lua.c )
-set ( SRC_LUAC src/luac.c )
 
 if ( LUA_USE_RELATIVE_LOADLIB )
   # Use modified loadlib
-  list ( APPEND SRC_LIB src/loadlib_rel.c )
+  list ( APPEND SRC_ALL src/loadlib_rel.c )
 else ( )
-  list ( APPEND SRC_LIB src/loadlib.c )
+  list ( APPEND SRC_ALL src/loadlib.c )
 endif ( )
 
 ## BUILD
 # Create lua library
-add_library ( liblua ${SRC_CORE} ${SRC_LIB} ${LUA_DLL_RC} )
+add_library ( liblua ${SRC_ALL} ${LUA_DLL_RC} )
 target_link_libraries ( liblua ${LIBS} )
 set_target_properties ( liblua PROPERTIES OUTPUT_NAME lua CLEAN_DIRECT_OUTPUT 1 )
 if ( LUA_BUILD_AS_DLL )
   set_target_properties ( liblua PROPERTIES COMPILE_DEFINITIONS LUA_BUILD_AS_DLL )
 endif ()
 
-add_executable ( lua ${SRC_LUA} src/lua.rc )
-target_link_libraries ( lua liblua )
-
-add_executable ( luac ${SRC_CORE} ${SRC_LIB} ${SRC_LUAC} src/luac.rc )
-target_link_libraries ( luac ${LIBS} )
-
-# On windows a variant of the lua interpreter without console output needs to be built
-if ( LUA_BUILD_WLUA )
-  add_executable ( wlua WIN32 src/wmain.c ${SRC_LUA} src/lua.rc )
-  target_link_libraries ( wlua liblua )
-  install_executable ( wlua )
-endif ( )
-
-install_executable ( lua luac )
 install_library ( liblua )
 install_data ( README.md )
 #install_lua_module ( strict etc/strict.lua )
